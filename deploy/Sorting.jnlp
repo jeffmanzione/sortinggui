@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Sorting.jnlp">
+  <information>
+    <title>Sorting</title>
+    <vendor>Jeffrey Manzione</vendor>
+    <description>Sample JavaFX 2.0 application.</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <jfx:javafx-runtime version="2.2+" href="http://javadl.sun.com/webapps/download/GetFile/javafx-latest/windows-i586/javafx2.jnlp"/>
+  </resources>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Sorting.jar" size="42915" download="eager" />
+  </resources>
+  <applet-desc  width="1200" height="1000" main-class="com.javafx.main.NoJavaFXFallback"  name="Sorting" >
+    <param name="requiredFXVersion" value="2.2+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="1200" height="1000" main-class="graphics.Main"  name="Sorting" />
+  <update check="background"/>
+</jnlp>
