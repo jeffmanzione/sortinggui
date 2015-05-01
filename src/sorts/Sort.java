@@ -13,14 +13,14 @@ import java.util.Queue;
  */
 public abstract class Sort {
 
-	private int[] array;
-	private int comparisons;
-	private int swaps;
+	private int[]				array;
+	private int					comparisons;
+	private int					swaps;
 
-	private boolean isDone;
+	private boolean				isDone;
 
-	private LinkedList<Integer> compared;
-	private LinkedList<Integer> swapped;
+	private LinkedList<Integer>	compared;
+	private LinkedList<Integer>	swapped;
 
 	/**
 	 * Intializes the sort with an array
@@ -28,8 +28,8 @@ public abstract class Sort {
 	 * @param array
 	 *            The array to sort
 	 */
-	public void initialize(int[] array) {
-		if (array == null) {
+	public void initialize ( int[] array ) {
+		if ( array == null ) {
 			throw new NullPointerException();
 		} else {
 			isDone = false;
@@ -43,14 +43,14 @@ public abstract class Sort {
 
 	}
 
-	protected abstract void initialize();
+	protected abstract void initialize ();
 
-	protected void swap(int indexA, int indexB) {
-		checkBounds(indexA, indexB);
+	protected void swap ( int indexA, int indexB ) {
+		checkBounds( indexA, indexB );
 
 		// swapped.clear();
-		swapped.add(indexA);
-		swapped.add(indexB);
+		swapped.add( indexA );
+		swapped.add( indexB );
 
 		int tmp = array[indexA];
 		array[indexA] = array[indexB];
@@ -59,81 +59,81 @@ public abstract class Sort {
 		swaps++;
 	}
 
-	public List<Integer> lastCompared() {
+	public List<Integer> lastCompared () {
 		return compared;
 	}
 
-	public List<Integer> lastSwapped() {
+	public List<Integer> lastSwapped () {
 		return swapped;
 	}
 
-	private void checkBounds(int indexA, int indexB) {
-		if (!inBounds(indexA)) {
-			throw new IndexOutOfBoundsException("LBound is out of bounds");
-		} else if (!inBounds(indexB)) {
-			throw new IndexOutOfBoundsException("RBound is out of bounds");
+	private void checkBounds ( int indexA, int indexB ) {
+		if ( !inBounds( indexA ) ) {
+			throw new IndexOutOfBoundsException( "LBound is out of bounds" );
+		} else if ( !inBounds( indexB ) ) {
+			throw new IndexOutOfBoundsException( "RBound is out of bounds" );
 		}
 	}
 
-	private void checkBound(int index) {
-		if (!inBounds(index)) {
-			throw new IndexOutOfBoundsException("Bound is out of bounds");
+	private void checkBound ( int index ) {
+		if ( !inBounds( index ) ) {
+			throw new IndexOutOfBoundsException( "Bound is out of bounds" );
 		}
 	}
 
-	private boolean inBounds(int index) {
+	private boolean inBounds ( int index ) {
 		return !(index < 0 || index >= array.length);
 
 	}
 
-	protected int compare(int indexA, int indexB) {
-		checkBounds(indexA, indexB);
+	protected int compare ( int indexA, int indexB ) {
+		checkBounds( indexA, indexB );
 
 		comparisons++;
 
 		// compared.clear();
-		compared.add(indexA);
-		compared.add(indexB);
+		compared.add( indexA );
+		compared.add( indexB );
 
 		return array[indexA] - array[indexB];
 
 	}
 
-//	protected int compare(int currIndex, int leftIndex, int rightIndex) {
-//		checkBounds(currIndex, leftIndex);
-//		checkBounds(0, rightIndex);
-//		int val;
-//
-//		if (compare(leftIndex, rightIndex) > 0) {
-//			if (compare(leftIndex, currIndex) > 0) {
-//				val = -1;
-//			} else {
-//				val = 0;
-//			}
-//		} else {
-//			if (compare(rightIndex, currIndex) > 0) {
-//				val = 1;
-//			} else {
-//				val = 0;
-//			}
-//		}
-//
-//		// compared.clear();
-//		compared.add(currIndex);
-//		compared.add(leftIndex);
-//		compared.add(rightIndex);
-//
-//		return val;
-//
-//	}
+	// protected int compare(int currIndex, int leftIndex, int rightIndex) {
+	// checkBounds(currIndex, leftIndex);
+	// checkBounds(0, rightIndex);
+	// int val;
+	//
+	// if (compare(leftIndex, rightIndex) > 0) {
+	// if (compare(leftIndex, currIndex) > 0) {
+	// val = -1;
+	// } else {
+	// val = 0;
+	// }
+	// } else {
+	// if (compare(rightIndex, currIndex) > 0) {
+	// val = 1;
+	// } else {
+	// val = 0;
+	// }
+	// }
+	//
+	// // compared.clear();
+	// compared.add(currIndex);
+	// compared.add(leftIndex);
+	// compared.add(rightIndex);
+	//
+	// return val;
+	//
+	// }
 
-	protected int compareToValue(int index, int value) {
-		checkBound(index);
+	protected int compareToValue ( int index, int value ) {
+		checkBound( index );
 
 		comparisons++;
 
 		compared.clear();
-		compared.add(index);
+		compared.add( index );
 
 		return array[index] - value;
 	}
@@ -145,26 +145,35 @@ public abstract class Sort {
 	 * @throws SortCompletedException
 	 *             If you call next and it is already sorted
 	 */
-	public boolean next() throws SortCompletedException {
-		if (isDone()) {
+	public boolean next () throws SortCompletedException {
+		if ( isDone() ) {
 			throw new SortCompletedException();
-		} else if (doneCheck()) {
+		} else if ( doneCheck() ) {
 			done();
 			return true;
 		} else {
 			swapped.clear();
 			compared.clear();
-			nextMove();
-			return false;
+			// nextMove();
+			while ( !doneCheck() && compared.size() < 2 ) {
+				nextMove();
+			}
+
+			if ( doneCheck() ) {
+				done();
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
-	protected abstract void nextMove();
+	protected abstract void nextMove ();
 
-	protected abstract boolean doneCheck();
+	protected abstract boolean doneCheck ();
 
-	public int valueOf(int index) {
-		checkBound(index);
+	public int valueOf ( int index ) {
+		checkBound( index );
 		return array[index];
 	}
 
@@ -172,7 +181,7 @@ public abstract class Sort {
 	 * 
 	 * @return The number of total comparisons
 	 */
-	public int getComparisons() {
+	public int getComparisons () {
 		return comparisons;
 	}
 
@@ -180,7 +189,7 @@ public abstract class Sort {
 	 * 
 	 * @return The number of total swaps
 	 */
-	public int getSwaps() {
+	public int getSwaps () {
 		return swaps;
 	}
 
@@ -188,11 +197,11 @@ public abstract class Sort {
 	 * 
 	 * @return The length of the array
 	 */
-	public int arrayLength() {
+	public int arrayLength () {
 		return array.length;
 	}
 
-	protected void done() {
+	protected void done () {
 		isDone = true;
 	}
 
@@ -200,7 +209,7 @@ public abstract class Sort {
 	 * 
 	 * @return <b>true</b> if the sort is completed, <b>false</b> otherwise.
 	 */
-	public boolean isDone() {
+	public boolean isDone () {
 		return isDone;
 	}
 
@@ -208,9 +217,9 @@ public abstract class Sort {
 	 * 
 	 * @return The string representation of the array.
 	 */
-	public String getArrayToString() {
+	public String getArrayToString () {
 		String result = "[" + array[0];
-		for (int i = 1; i < array.length; i++) {
+		for ( int i = 1; i < array.length; i++ ) {
 			result += "," + array[i];
 		}
 		return result + "]";
@@ -220,15 +229,15 @@ public abstract class Sort {
 	 * 
 	 * @return The string representation of the array.
 	 */
-	public static String getArrayToString(int[] arr) {
+	public static String getArrayToString ( int[] arr ) {
 		String result = "[" + arr[0];
-		for (int i = 1; i < arr.length; i++) {
+		for ( int i = 1; i < arr.length; i++ ) {
 			result += "," + arr[i];
 		}
 		return result + "]";
 	}
-	
-	public int[] getArray() {
+
+	public int[] getArray () {
 		return array;
 	}
 }

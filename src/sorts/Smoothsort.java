@@ -1,6 +1,7 @@
 package sorts;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -10,31 +11,31 @@ import sorts.business.SortInfo;
 @SortInfo(name = "Smoothsort", designer = "Dijkstra (1981)", link = "http://en.wikipedia.org/wiki/Smoothsort")
 public class Smoothsort extends Sort {
 
-	private int index;
-	private boolean buildingHeap = true;
-	private Queue<HeapEvent> events;
+	private int					index;
+	private boolean				buildingHeap	= true;
+	private Deque<HeapEvent>	events;
 
-	private LeonardoHeap leon;
+	private LeonardoHeap		leon;
 
-	private int[] leonardo;
+	private int[]				leonardo;
 
 	@Override
-	protected void initialize() {
+	protected void initialize () {
 		index = 0;
 
 		leon = new LeonardoHeap();
 
 		events = new LinkedList<HeapEvent>() {
-			private static final long serialVersionUID = 2580961194841371381L;
+			private static final long	serialVersionUID	= 2580961194841371381L;
 
 			@Override
-			public boolean add(HeapEvent e) {
+			public boolean add ( HeapEvent e ) {
 				// System.out.println("INSERTED: " + e);
-				return super.add(e);
+				return super.add( e );
 			}
 
 			@Override
-			public HeapEvent remove() {
+			public HeapEvent remove () {
 				HeapEvent e = super.remove();
 				// System.out.println("REMOVED: " + e);
 				return e;
@@ -42,37 +43,37 @@ public class Smoothsort extends Sort {
 
 		};
 
-		buildLeonardo(2, 1, 1);
+		buildLeonardo( 2, 1, 1 );
 		leonardo[0] = leonardo[1] = 1;
 
 		// System.out.println(Sort.getArrayToString(leonardo));
 
 	}
 
-	private void buildLeonardo(int iters, int prev2, int prev1) {
+	private void buildLeonardo ( int iters, int prev2, int prev1 ) {
 		int leon = prev1 + prev2 + 1;
 
-		if (leon > arrayLength()) {
+		if ( leon > arrayLength() ) {
 			leonardo = new int[iters + 1];
 		} else {
-			buildLeonardo(iters + 1, prev1, leon);
+			buildLeonardo( iters + 1, prev1, leon );
 		}
 
 		leonardo[iters] = leon;
 	}
 
 	@Override
-	protected void nextMove() {
+	protected void nextMove () {
 
 		doLoopEvent();
 
 		// System.out.println("EVENTS SZ: " + events.size());
-		if (events.isEmpty()) {
+		if ( events.isEmpty() ) {
 			// System.out.println(this.getArrayToString());
 			// System.out.println(leon.toString());
 
-			if (buildingHeap) {
-				while (events.isEmpty()) {
+			if ( buildingHeap ) {
+				while ( events.isEmpty() ) {
 					incHeap();
 					// System.out.println("Lel");
 				}
@@ -81,85 +82,97 @@ public class Smoothsort extends Sort {
 				// System.out.println("DECREMENT");
 				decHeap();
 			}
-
-			doLoopEvent();
+			if ( this.lastCompared().size() == 0 ) {
+				doLoopEvent();
+			}
 		}
 
 	}
 
-	private void doLoopEvent() {
+	private void doLoopEvent () {
 
-		boolean wasCompare = false;
-		while (!events.isEmpty()) {
+		int numCompares = 0;
+		while ( !events.isEmpty() ) {
 			HeapEvent event = events.remove();
 
 			// System.out.println(event);
 
-			if (event instanceof Compare) {
-				if (wasCompare) {
-					events.add(event);
-					break;
+			if ( event instanceof Compare ) {
+				numCompares++;
+				if ( numCompares > 1 ) {
+					return;
 				} else {
-					this.compare(event.x, event.y);
-					wasCompare = true;
+					this.compare( event.x, event.y );
 				}
-
 			} else {
-				this.swap(event.x, event.y);
+				this.swap( event.x, event.y );
 			}
+
+			// if (event instanceof Compare) {
+			// if (wasCompare) {
+			// events.push(event);
+			// break;
+			// } else {
+			// this.compare(event.x, event.y);
+			// wasCompare = true;
+			// }
+			//
+			// } else {
+			// this.swap(event.x, event.y);
+			// }
 
 			// System.out.println(event);
 		}
 	}
 
-	private boolean done = false;
+	private boolean	done	= false;
 
-	private void decHeap() {
+	private void decHeap () {
 		leon.delete();
-		if (index == 1) {
+		if ( index == 1 ) {
 			done = true;
 		}
 	}
 
-	private void incHeap() {
+	private void incHeap () {
 		leon.insert();
 
-		if (index == arrayLength()) {
+		if ( index == arrayLength() ) {
 			index--;
 			buildingHeap = false;
 		}
 	}
 
 	@Override
-	protected boolean doneCheck() {
+	protected boolean doneCheck () {
 		return done;
 	}
 
 	private abstract class HeapEvent {
-		protected int x, y;
+		protected int	x, y;
 
-		public HeapEvent(int x, int y) {
+		public HeapEvent ( int x, int y ) {
 			this.x = x;
 			this.y = y;
 		}
 	}
 
 	private class Swap extends HeapEvent {
-		public Swap(int x, int y) {
-			super(x, y);
+		public Swap ( int x, int y ) {
+			super( x, y );
 		}
 
-		public String toString() {
+		public String toString () {
 			return "Swap(" + x + "," + y + ")";
 		}
 	}
 
 	private class Compare extends HeapEvent {
-		public Compare(int x, int y) {
-			super(x, y);
+		public Compare ( int x, int y ) {
+			super( x, y );
 		}
 
-		public String toString() {
+		public String toString () {
 			return "Swap(" + x + "," + y + ")";
 		}
 	}
@@ -167,37 +180,37 @@ public class Smoothsort extends Sort {
 	private class LeonardoHeap {
 
 		private class LeonardoNode {
-			private int order = 0, val = 0;
+			private int	order	= 0, val = 0;
 
-			private LeonardoNode left, right;
+			private LeonardoNode	left, right;
 
-			private int index;
+			private int				index;
 
-			public LeonardoNode(int index, int val) {
+			public LeonardoNode ( int index, int val ) {
 				// System.out.println("Index: " + index);
 				this.index = index;
 				this.val = val;
 			}
 
-			public String toString() {
-				if (left == null) {
+			public String toString () {
+				if ( left == null ) {
 					return "" + val;
 				} else {
 					return "(" + left + "," + right + "<--" + val + ")";
 				}
 			}
 
-			public LeonardoNode(int index, int val, LeonardoNode left, LeonardoNode right) {
-				this(index, val);
+			public LeonardoNode ( int index, int val, LeonardoNode left, LeonardoNode right ) {
+				this( index, val );
 				this.left = left;
 				this.right = right;
 				this.order = left.order + 1;
 			}
 
-			private void reheap() {
+			private void reheap () {
 				// System.out.println("Reheap");
 
-				if (left != null) {
+				if ( left != null ) {
 
 					// events.add(new Compare(left.index, right.index));
 					// if (left.val > right.val) {
@@ -210,11 +223,11 @@ public class Smoothsort extends Sort {
 					// left.reheap();
 					// }
 
-					if (left.val > right.val) {
-						events.add(new Compare(left.index, this.index));
-						if (left.val > this.val) {
+					if ( left.val > right.val ) {
+						events.add( new Compare( left.index, this.index ) );
+						if ( left.val > this.val ) {
 							// System.out.println("LEFT");
-							events.add(new Swap(left.index, this.index));
+							events.add( new Swap( left.index, this.index ) );
 							int tmp = this.val;
 							this.val = left.val;
 							left.val = tmp;
@@ -223,10 +236,10 @@ public class Smoothsort extends Sort {
 						}
 					} else {
 
-						events.add(new Compare(right.index, this.index));
-						if (right.val > this.val) {
+						events.add( new Compare( right.index, this.index ) );
+						if ( right.val > this.val ) {
 							// System.out.println("RIGHT");
-							events.add(new Swap(right.index, this.index));
+							events.add( new Swap( right.index, this.index ) );
 							int tmp = this.val;
 							this.val = right.val;
 							right.val = tmp;
@@ -238,27 +251,27 @@ public class Smoothsort extends Sort {
 			}
 		}
 
-		private List<LeonardoNode> children;
+		private List<LeonardoNode>	children;
 
-		public LeonardoHeap() {
+		public LeonardoHeap () {
 			children = new ArrayList<>();
 		}
 
-		public String toString() {
+		public String toString () {
 			return children.toString();
 		}
 
-		public LeonardoNode last() {
-			return children.get(children.size() - 1);
+		public LeonardoNode last () {
+			return children.get( children.size() - 1 );
 		}
 
-		public void delete() {
+		public void delete () {
 			// System.out.println("DELETE");
 
-			LeonardoNode node = children.remove(children.size() - 1);
-			if (node.left != null) {
-				children.add(node.left);
-				children.add(node.right);
+			LeonardoNode node = children.remove( children.size() - 1 );
+			if ( node.left != null ) {
+				children.add( node.left );
+				children.add( node.right );
 
 				fixUpHeaps();
 			}
@@ -266,38 +279,38 @@ public class Smoothsort extends Sort {
 			index--;
 		}
 
-		public void insert() {
+		public void insert () {
 
 			// System.out.println("INSERT");
-			int val = valueOf(Smoothsort.this.index);
+			int val = valueOf( Smoothsort.this.index );
 
 			LeonardoNode node;
 
 			boolean shouldInc = false;
 
-			if (children.size() > 1 && last().order + 1 == children.get(children.size() - 2).order) {
+			if ( children.size() > 1 && last().order + 1 == children.get( children.size() - 2 ).order ) {
 				shouldInc = true;
 				// System.out.println(">>> Combine");
 				// LeonardoNode right = children.remove(children.size() - 1);
 				// LeonardoNode left = children.remove(children.size() - 1);
 				// node = new LeonardoNode(index, val, left, right);
-				node = new LeonardoNode(index, val);
+				node = new LeonardoNode( index, val );
 				// node.reheap();
 
-			} else if (children.size() == 0 || last().order != 1) {
+			} else if ( children.size() == 0 || last().order != 1 ) {
 				// System.out.println(">>> Baby");
-				node = new LeonardoNode(index, val);
+				node = new LeonardoNode( index, val );
 				node.order = 1;
 			} else {
 				// System.out.println(">>> Tail");
-				node = new LeonardoNode(index, val);
+				node = new LeonardoNode( index, val );
 			}
 
-			children.add(node);
+			children.add( node );
 
 			fixUpHeaps();
 
-			if (shouldInc) {
+			if ( shouldInc ) {
 				this.incHeap();
 			}
 
@@ -307,23 +320,23 @@ public class Smoothsort extends Sort {
 
 		}
 
-		private void incHeap() {
+		private void incHeap () {
 			// System.out.println(">>> Combine");
-			LeonardoNode node = children.remove(children.size() - 1);
-			LeonardoNode right = children.remove(children.size() - 1);
-			LeonardoNode left = children.remove(children.size() - 1);
-			node = new LeonardoNode(node.index, node.val, left, right);
-			children.add(node);
+			LeonardoNode node = children.remove( children.size() - 1 );
+			LeonardoNode right = children.remove( children.size() - 1 );
+			LeonardoNode left = children.remove( children.size() - 1 );
+			node = new LeonardoNode( node.index, node.val, left, right );
+			children.add( node );
 			// node.reheap();
 		}
 
-		private void fixUpHeaps() {
+		private void fixUpHeaps () {
 			// System.out.println("FIXUP");
 			// System.out.println(children.get(pos).order);
 
-			if (!buildingHeap
-					|| (children.size() > 1 && arrayLength() - index <= leonardo[(children.get(children.size() - 2).order == 0 ? 1
-							: children.get(children.size() - 2).order) - 1] + 1)) {
+			if ( !buildingHeap
+					|| (children.size() > 1 && arrayLength() - index <= leonardo[(children.get( children.size() - 2 ).order == 0 ? 1
+							: children.get( children.size() - 2 ).order) - 1] + 1) ) {
 
 				// System.out.println("Yup");
 
@@ -331,7 +344,7 @@ public class Smoothsort extends Sort {
 
 				boolean doneRoot = false;
 
-				if (pos == 0) {
+				if ( pos == 0 ) {
 					pos++;
 					doneRoot = true;
 				}
@@ -343,17 +356,17 @@ public class Smoothsort extends Sort {
 				// + leonardo[(children.get(children.size() - 2).order == 0 ? 1
 				// : children.get(children.size() - 2).order) - 1] + 1 + " " + children.get(children.size() - 2).order);
 
-				while (pos > 0) {
+				while ( pos > 0 ) {
 					// System.out.println(pos);
-					LeonardoNode cur = children.get(pos);
-					LeonardoNode last = children.get(pos - 1);
+					LeonardoNode cur = children.get( pos );
+					LeonardoNode last = children.get( pos - 1 );
 					// System.out.println("Compare CUR(" + cur.index + ")=" + cur.val + " LAST(" + last.index + ")="
 					// + last.val);
 
-					events.add(new Compare(cur.index, last.index));
-					if (cur.val < last.val) {
+					events.add( new Compare( cur.index, last.index ) );
+					if ( cur.val < last.val ) {
 						// System.out.println("YES");
-						events.add(new Swap(last.index, cur.index));
+						events.add( new Swap( last.index, cur.index ) );
 						int tmp = cur.val;
 						cur.val = last.val;
 						last.val = tmp;
@@ -363,25 +376,25 @@ public class Smoothsort extends Sort {
 
 					pos--;
 
-					if (pos == 0 && !doneRoot) {
+					if ( pos == 0 && !doneRoot ) {
 						pos = children.size() - 1;
 						doneRoot = true;
 					}
 
 				}
 
-			} else if (children.size() > 1) {
+			} else if ( children.size() > 1 ) {
 				// System.out.println("Nope");
 				// System.out.println(pos);
-				LeonardoNode cur = children.get(children.size() - 1);
-				LeonardoNode last = children.get(children.size() - 2);
+				LeonardoNode cur = children.get( children.size() - 1 );
+				LeonardoNode last = children.get( children.size() - 2 );
 				// System.out.println("Compare CUR(" + cur.index + ")=" + cur.val + " LAST(" + last.index + ")="
 				// + last.val);
 
-				events.add(new Compare(cur.index, last.index));
-				if (cur.val < last.val) {
+				events.add( new Compare( cur.index, last.index ) );
+				if ( cur.val < last.val ) {
 					// System.out.println("YES");
-					events.add(new Swap(last.index, cur.index));
+					events.add( new Swap( last.index, cur.index ) );
 					int tmp = cur.val;
 					cur.val = last.val;
 					last.val = tmp;

@@ -21,7 +21,6 @@ public class InsertionSort extends Sort {
 	}
 	
 	protected void nextMove () {
-		System.out.println(index);
 		if ( this.compare( index, cmpTo ) >= 0 ) {
 			swapIntoPlaceAndReset();
 		} else {
