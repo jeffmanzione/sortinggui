@@ -1,9 +1,7 @@
 package sorts;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Sort Class allows for generic construction of a sort so that it can be easily represented in a visual way.
@@ -126,7 +124,7 @@ public abstract class Sort {
 	// return val;
 	//
 	// }
-
+	@Deprecated
 	protected int compareToValue ( int index, int value ) {
 		checkBound( index );
 

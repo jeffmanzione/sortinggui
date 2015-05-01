@@ -12,6 +12,10 @@ import graphics.exceptions.UninitializedSortDisplayException;
 import sorts.Sort;
 import sorts.SortCompletedException;
 import sorts.business.SortInfo;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,41 +29,54 @@ import javafx.stage.Screen;
 
 public class SortDisplay extends Pane {
 
-	private int[] startArray;
-	private int[] heat;
-	private Sort sort;
+	private int[]				startArray;
+	private int[]				heat;
+	private Sort				sort;
 
-	private Canvas canvas;
+	private Canvas				canvas;
 
-	private GraphicsContext g;
+	private GraphicsContext		g;
 
-	private Label comparisons;
+	private Label				comparisons;
 
-	private Hyperlink link;
+	private Hyperlink			link;
 
-	private String url;
+	private String				url;
 
 	// private Button button;
 
-	private static final int Bar_Height = 36;
+	private static final int	Bar_Height	= 36;
 
-	public SortDisplay() {
-		comparisons = new Label("Comparisons: 0    Swaps: 0");
-		link = new Hyperlink("EMPTY");
-		link.setDisable(true);
+	public SortDisplay () {
+		comparisons = new Label( "Comparisons: 0    Swaps: 0" );
+		link = new Hyperlink( "EMPTY" );
+		link.setDisable( true );
 		// link.set
 
-		link.setOnAction(e -> {
-			try {
-				Desktop.getDesktop().browse(new URI(url));
-			} catch (Exception e1) {
-				e1.printStackTrace();
+		new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle ( ActionEvent e ) {
+
 			}
-		});
+
+		};
+		link.setOnAction( new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle ( ActionEvent e ) {
+				try {
+					Desktop.getDesktop().browse( new URI( url ) );
+				} catch ( Exception e1 ) {
+					e1.printStackTrace();
+				}
+			}
+
+		} );
 
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
-		canvas = new Canvas(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+		canvas = new Canvas( primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight() );
 		//
 		// canvas.widthProperty().bind(this.widthProperty());
 		// canvas.widthProperty().addListener(e -> redraw());
@@ -67,24 +84,36 @@ public class SortDisplay extends Pane {
 		// canvas.heightProperty().addListener(e -> redraw());
 		//
 
-		this.widthProperty().addListener(e -> redraw());
-		this.heightProperty().addListener(e -> redraw());
+		this.widthProperty().addListener( new ChangeListener<Number>() {
+			@Override
+			public void changed ( ObservableValue<? extends Number> observable, Number oldValue, Number newValue ) {
+				redraw();
+			}
+
+		} );
+		this.heightProperty().addListener( new ChangeListener<Number>() {
+			@Override
+			public void changed ( ObservableValue<? extends Number> observable, Number oldValue, Number newValue ) {
+				redraw();
+			}
+
+		} );
 
 		g = canvas.getGraphicsContext2D();
 		// swaps = new Label("Swaps: 0");
 		// button = new Button("Start");
 
-		this.getChildren().addAll(canvas, comparisons, link /* , swaps , button */);
+		this.getChildren().addAll( canvas, comparisons, link /* , swaps , button */);
 
 		// button.setOnAction(e -> {System.out.println("Hi");});
 
 		redraw();
 	}
 
-	public boolean next() {
+	public boolean next () {
 		try {
 			return sort.next();
-		} catch (SortCompletedException e) {
+		} catch ( SortCompletedException e ) {
 			return true;
 		} finally {
 			redraw();
@@ -137,8 +166,8 @@ public class SortDisplay extends Pane {
 				blockWidth = 3;
 			}
 
-			List<Integer> lastCompared = sort == null ? new ArrayList<>() : sort.lastCompared();
-			List<Integer> lastSwapped = sort == null ? new ArrayList<>() : sort.lastSwapped();
+			List<Integer> lastCompared = sort == null ? new ArrayList<Integer>() : sort.lastCompared();
+			List<Integer> lastSwapped = sort == null ? new ArrayList<Integer>() : sort.lastSwapped();
 
 			boolean isDone = sort == null ? false : sort.isDone();
 
@@ -148,8 +177,12 @@ public class SortDisplay extends Pane {
 				}
 			}
 
-			lastSwapped.forEach(i -> heat[i] += 2);
-			lastCompared.forEach(i -> heat[i] += 2);
+			for (int i : lastSwapped) {
+				heat[i] += 2;
+			}
+			for (int i : lastCompared) {
+				heat[i] += 2;
+			}
 
 			for (int i = 0; i < vals.length; i++) {
 				if (isDone) {
@@ -209,7 +242,7 @@ public class SortDisplay extends Pane {
 				+ (sort == null ? 0 : sort.getSwaps()));
 		comparisons.setLayoutY(10);
 		comparisons.setLayoutX(this.getWidth() / 2 - comparisons.getWidth() / 2);
-		link.setLayoutY(8);
+		link.setLayoutY(6);
 		link.setLayoutX(10);
 
 	}
@@ -218,108 +251,108 @@ public class SortDisplay extends Pane {
 	// configure(sort == null ? startArray : sort.getArray());
 	// }
 
-	public void configure(int[] startArray) {
+	public void configure ( int[] startArray ) {
 		this.startArray = startArray;
 		this.heat = new int[startArray.length];
 	}
 
-	public void reset() {
-		if (startArray == null) {
+	public void reset () {
+		if ( startArray == null ) {
 			throw new UninitializedSortDisplayException();
 		} else {
-			if (sort != null) {
-				sort.initialize(startArray);
+			if ( sort != null ) {
+				sort.initialize( startArray );
 			}
 
 		}
 	}
 
-	public void setSort(Sort sort) {
+	public void setSort ( Sort sort ) {
 		this.sort = sort;
 	}
 
-	public static int[] generateArray(int length) {
+	public static int[] generateArray ( int length ) {
 		Integer[] valt = new Integer[length];
-		for (int i = 0; i < length; i++) {
+		for ( int i = 0; i < length; i++ ) {
 			valt[i] = i + 1;
 		}
 
-		List<Integer> valsList = Arrays.asList(valt);
-		Collections.shuffle(valsList);
+		List<Integer> valsList = Arrays.asList( valt );
+		Collections.shuffle( valsList );
 
 		final int[] vals = new int[valt.length];
-		for (int i = 0; i < vals.length; i++) {
-			vals[i] = valsList.get(i);
+		for ( int i = 0; i < vals.length; i++ ) {
+			vals[i] = valsList.get( i );
 		}
 
 		return vals;
 	}
 
-	public int[] getArray() {
+	public int[] getArray () {
 		return sort.getArray();
 	}
 
-	public boolean isSorted() {
+	public boolean isSorted () {
 		return sort.isDone();
 	}
 
-	public static int[] generatePartiallySortedArray(int length) {
+	public static int[] generatePartiallySortedArray ( int length ) {
 		int[] vals = new int[length];
 		Integer[] seen = new Integer[length];
-		for (int i = 0; i < length; i++) {
+		for ( int i = 0; i < length; i++ ) {
 			vals[i] = i + 1;
 			seen[i] = i;
 		}
 
-		List<Integer> valsLeft = new ArrayList<>(Arrays.asList(seen));
+		List<Integer> valsLeft = new ArrayList<>( Arrays.asList( seen ) );
 
 		Random rand = new Random();
 
-		for (int i = 0; i < length / 4; i++) {
+		for ( int i = 0; i < length / 4; i++ ) {
 			int length1 = valsLeft.size();
-			int index1 = rand.nextInt(length1);
+			int index1 = rand.nextInt( length1 );
 			int index2 = index1;
-			while (index2 == index1) {
+			while ( index2 == index1 ) {
 				int offset, base;
 
 				base = (length1 / 8);
 				offset = index1;
 
-				if (offset - base + length1 / 4 > length1 - 1) {
+				if ( offset - base + length1 / 4 > length1 - 1 ) {
 					offset = length1 - 1 + base - length1 / 4;
 				}
 
-				if (index1 - (length1 / 8) < 1) {
+				if ( index1 - (length1 / 8) < 1 ) {
 					offset = base = 0;
 				}
 
-				index2 = offset + rand.nextInt(length1 / 4) - base;
+				index2 = offset + rand.nextInt( length1 / 4 ) - base;
 			}
 
 			int tmp = vals[index1];
 			vals[index1] = vals[index2];
 			vals[index2] = tmp;
 
-			valsLeft.remove(index1);
-			valsLeft.remove(index2);
+			valsLeft.remove( index1 );
+			valsLeft.remove( index2 );
 
 		}
 
 		return vals;
 	}
 
-	public void setSelection(Class<? extends Sort> sortClass) {
+	public void setSelection ( Class<? extends Sort> sortClass ) {
 		String name = "";
 
 		try {
-			name = sortClass.getAnnotation(SortInfo.class).name();
-			url = sortClass.getAnnotation(SortInfo.class).link();
-			link.setDisable(false);
-		} catch (Exception e) {
+			name = sortClass.getAnnotation( SortInfo.class ).name();
+			url = sortClass.getAnnotation( SortInfo.class ).link();
+			link.setDisable( false );
+		} catch ( Exception e ) {
 			name = sortClass.getSimpleName();
-			link.setDisable(true);
+			link.setDisable( true );
 		} finally {
-			this.link.setText(name);
+			this.link.setText( name );
 		}
 
 	}

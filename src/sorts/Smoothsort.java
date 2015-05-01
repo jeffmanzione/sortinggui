@@ -3,7 +3,6 @@ package sorts;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Queue;
 import java.util.LinkedList;
 
 import sorts.business.SortInfo;

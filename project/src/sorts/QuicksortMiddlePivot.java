@@ -45,7 +45,7 @@ public class QuicksortMiddlePivot extends Sort {
 
 				left = range.start;
 				right = range.end;
-				pivot = this.valueOf(left + (right - left) / 2);
+				pivot = left + (right - left) / 2;
 				sorting = true;
 
 				// System.out.println(range);
@@ -59,11 +59,11 @@ public class QuicksortMiddlePivot extends Sort {
 				return;
 			}
 		}
-
+		
 		if (left <= right) {
 
 			if (incLeft) {
-				if (this.compareToValue(left, pivot) < 0) {
+				if (this.compare(left, pivot) < 0) {
 					left++;
 				} else {
 					incRight = true;
@@ -73,7 +73,7 @@ public class QuicksortMiddlePivot extends Sort {
 			}
 
 			if (incRight) {
-				if (this.compareToValue(right, pivot) > 0) {
+				if (this.compare(right, pivot) > 0) {
 					right--;
 				} else {
 					incRight = false;
@@ -83,6 +83,9 @@ public class QuicksortMiddlePivot extends Sort {
 			if (!incLeft && !incRight) {
 				if (left <= right) {
 					this.swap(left, right);
+					if (left == pivot) pivot = right;
+					else if (right == pivot) pivot = left;
+					
 					left++;
 					right--;
 				}

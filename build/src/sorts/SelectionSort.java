@@ -4,19 +4,19 @@ import sorts.business.SortInfo;
 
 @SortInfo(name = "Selection Sort", designer = "N/A", link = "http://en.wikipedia.org/wiki/Selection_Sort")
 public class SelectionSort extends Sort {
-	private int min, indexOfMin;
+	private int indexOfMin;
 	private int start, index;
 	
 	protected void initialize() {
 		start = 0;
-		min = valueOf(0);
+		//min = valueOf(0);
 		indexOfMin = 0;
 		index = 1;
 	}
 
 	protected void nextMove() {
-		if (this.compareToValue(index, min) < 0) {
-			min = valueOf(index);
+		if (this.compare(index, indexOfMin) < 0) {
+			//min = valueOf(index);
 			indexOfMin = index;
 		}
 		
@@ -26,7 +26,7 @@ public class SelectionSort extends Sort {
 			index = start+2;
 			swap(start, indexOfMin);
 			start++;
-			min = valueOf(start);
+			//min = valueOf(start);
 			indexOfMin = start;
 		}
 	}
