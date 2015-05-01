@@ -1,7 +1,9 @@
 package sorts;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Sort Class allows for generic construction of a sort so that it can be easily represented in a visual way.
@@ -17,8 +19,8 @@ public abstract class Sort {
 
 	private boolean isDone;
 
-	private List<Integer> compared;
-	private List<Integer> swapped;
+	private LinkedList<Integer> compared;
+	private LinkedList<Integer> swapped;
 
 	/**
 	 * Intializes the sort with an array
@@ -34,8 +36,8 @@ public abstract class Sort {
 			this.array = array.clone();
 			comparisons = 0;
 			swaps = 0;
-			compared = new ArrayList<Integer>();
-			swapped = new ArrayList<Integer>();
+			compared = new LinkedList<Integer>();
+			swapped = new LinkedList<Integer>();
 			initialize();
 		}
 

@@ -8,54 +8,54 @@ import java.util.List;
 import sorts.business.SortInfo;
 
 @SortInfo(name = "Parallel Quicksort (Middle Pivot)", designer = "Hoare (1961)", link = "http://en.wikipedia.org/wiki/Quicksort")
-public class ParallelQuicksortModdlePivot extends Sort {
+public class ParallelQuicksortMiddlePivot extends Sort {
 
-	private List<SimulatedThread> ranges, nextRanges;
+	private List<SimulatedThread>	ranges, nextRanges;
 
 	private class Range {
-		final int start, end;
+		final int	start, end;
 
-		public Range(int start, int end) {
+		public Range ( int start, int end ) {
 			this.start = start;
 			this.end = end;
 		}
 
-		public String toString() {
+		public String toString () {
 			return "[" + start + "," + end + "]";
 		}
 	}
 
-	protected void initialize() {
+	protected void initialize () {
 		ranges = new ArrayList<>();
 		nextRanges = new ArrayList<>();
-		ranges.add(new SimulatedThread(new Range(0, arrayLength() - 1)));
+		ranges.add( new SimulatedThread( new Range( 0, arrayLength() - 1 ) ) );
 		// sorting = done = false;
 	}
 
 	private class SimulatedThread {
 
-		private Range range;
+		private Range	range;
 
-		int left, right, pivot;
+		int				left, right, pivot;
 
-		private boolean sorting;
-		private boolean incLeft, incRight;
+		private boolean	sorting;
+		private boolean	incLeft, incRight;
 
-		public SimulatedThread(Range range) {
+		public SimulatedThread ( Range range ) {
 			this.range = range;
 
 			// System.out.println("RANGE = " + range);
 		}
 
-		private void nextMove(Iterator<SimulatedThread> iter) {
-			if (!sorting) {
+		private void nextMove ( Iterator<SimulatedThread> iter ) {
+			if ( !sorting ) {
 				try {
 					incLeft = true;
 					incRight = false;
 
 					left = range.start;
 					right = range.end;
-					pivot = valueOf(left + (right - left) / 2);
+					pivot = left + (right - left) / 2;
 					sorting = true;
 
 					// System.out.println(range);
@@ -65,15 +65,15 @@ public class ParallelQuicksortModdlePivot extends Sort {
 					// left,
 					// right, pivot, range, sorting, incLeft, incRight);
 
-				} catch (EmptyStackException e) {
+				} catch ( EmptyStackException e ) {
 					return;
 				}
 			}
 
-			if (left <= right) {
+			if ( left <= right ) {
 
-				if (incLeft) {
-					if (compareToValue(left, pivot) < 0) {
+				if ( incLeft ) {
+					if ( compare( left, pivot ) < 0 ) {
 						left++;
 					} else {
 						incRight = true;
@@ -82,17 +82,21 @@ public class ParallelQuicksortModdlePivot extends Sort {
 					}
 				}
 
-				if (incRight) {
-					if (compareToValue(right, pivot) > 0) {
+				if ( incRight ) {
+					if ( compare( right, pivot ) > 0 ) {
 						right--;
 					} else {
 						incRight = false;
 					}
 				}
 
-				if (!incLeft && !incRight) {
-					if (left <= right) {
-						swap(left, right);
+				if ( !incLeft && !incRight ) {
+					if ( left <= right ) {
+						swap( left, right );
+						
+						if ( left == pivot ) pivot = right;
+						else if ( right == pivot ) pivot = left;
+
 						left++;
 						right--;
 					}
@@ -102,41 +106,41 @@ public class ParallelQuicksortModdlePivot extends Sort {
 			} else {
 				// System.out.println("AFT " + getArrayToString());
 
-				if (range.end - left > 0) {
+				if ( range.end - left > 0 ) {
 					// System.out.println("RIGHT " + new Range(left, range.end));
-					nextRanges.add(new SimulatedThread(new Range(left, range.end)));
+					nextRanges.add( new SimulatedThread( new Range( left, range.end ) ) );
 				}
-				if (right - range.start > 0) {
+				if ( right - range.start > 0 ) {
 					// System.out.println("LEFT " + new Range(range.start, right));
-					nextRanges.add(new SimulatedThread(new Range(range.start, right)));
+					nextRanges.add( new SimulatedThread( new Range( range.start, right ) ) );
 				}
 
 				sorting = false;
 				iter.remove();
-				nextMove(iter);
+				nextMove( iter );
 			}
 		}
 
 	}
 
-	protected void nextMove() {
+	protected void nextMove () {
 		// System.out.println(ranges.size());
 		nextRanges.clear();
 		Iterator<SimulatedThread> iter = ranges.iterator();
-		while (iter.hasNext()) {
+		while ( iter.hasNext() ) {
 			SimulatedThread st = iter.next();
-			st.nextMove(iter);
+			st.nextMove( iter );
 		}
-		ranges.addAll(nextRanges);
+		ranges.addAll( nextRanges );
 		// System.out.println(ranges.size());
 	}
 
-	protected boolean doneCheck() {
+	protected boolean doneCheck () {
 		return ranges.isEmpty();
 	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		return "Threaded Quicksort";
 	}
 }
