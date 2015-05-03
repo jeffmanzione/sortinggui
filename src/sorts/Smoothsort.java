@@ -99,6 +99,7 @@ public class Smoothsort extends Sort {
 			if ( event instanceof Compare ) {
 				numCompares++;
 				if ( numCompares > 1 ) {
+					events.push( event );
 					return;
 				} else {
 					this.compare( event.x, event.y );

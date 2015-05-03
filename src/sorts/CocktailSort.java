@@ -2,7 +2,7 @@ package sorts;
 
 import sorts.business.SortInfo;
 
-@SortInfo(name = "Cocktail Sort", designer = "N/A", link = "http://en.wikipedia.org/wiki/Cocktail_sort")
+@SortInfo(name = "Cocktail (Bubble) Sort", designer = "N/A", link = "http://en.wikipedia.org/wiki/Cocktail_sort")
 public class CocktailSort extends Sort {
 
 	private int start, end, index, leftLastSwapIndex, rightLastSwapIndex;

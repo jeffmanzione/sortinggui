@@ -33,25 +33,22 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
+@SuppressWarnings("unchecked")
 public class Main extends Application {
 
 	private int													numElts	= 100;
 
-	@SuppressWarnings("unchecked")
-	private static final ObservableList<Class<? extends Sort>>	sorts	= FXCollections.observableArrayList(
-																				BozoSort.class, StoogeSort.class,
-																				BubbleSort.class, CocktailSort.class,
-																				SelectionSort.class, GnomeSort.class,
-																				InsertionSort.class,
-																				BinaryInsertionSort.class,
-																				CombSort.class, Shellsort.class,
-																				WilliamsHeapsort.class,
-																				FloydsHeapsort.class, Smoothsort.class,
-																				Quicksort.class,
-																				QuicksortMiddlePivot.class,
-																				ParallelQuicksort.class,
-																				ParallelQuicksortMiddlePivot.class );
-
+	private static ObservableList<Class<? extends Sort>>	sorts;
+	
+	static {
+		
+		sorts = FXCollections.observableArrayList( BozoSort.class, StoogeSort.class, BubbleSort.class,
+				CocktailSort.class, SelectionSort.class, ShakerSort.class, GnomeSort.class, InsertionSort.class,
+				BinaryInsertionSort.class, CombSort.class, Shellsort.class, WilliamsHeapsort.class,
+				FloydsHeapsort.class, Smoothsort.class, Quicksort.class, QuicksortMiddlePivot.class,
+				ParallelQuicksort.class, ParallelQuicksortMiddlePivot.class );
+	}
+	
 	private ListView<Class<? extends Sort>>						left, right;
 
 	private SortDisplay											sdl		= new SortDisplay(), sdr = new SortDisplay();
@@ -286,40 +283,37 @@ public class Main extends Application {
 		reset.setLayoutY( top + left.getPrefHeight() + (mid - go.getHeight()) / 2 );
 	}
 
-	private Callback<ListView<Class<? extends Sort>>, ListCell<Class<? extends Sort>>>	cf	= new Callback<ListView<Class<? extends Sort>>, ListCell<Class<? extends Sort>>>() {
+	{
+		cf = new Callback<ListView<Class<? extends Sort>>, ListCell<Class<? extends Sort>>>() {
 
-																								@Override
-																								public ListCell<Class<? extends Sort>> call (
-																										ListView<Class<? extends Sort>> p ) {
+			@Override
+			public ListCell<Class<? extends Sort>> call ( ListView<Class<? extends Sort>> p ) {
 
-																									ListCell<Class<? extends Sort>> cell = new ListCell<Class<? extends Sort>>() {
+				ListCell<Class<? extends Sort>> cell = new ListCell<Class<? extends Sort>>() {
 
-																										@Override
-																										protected void updateItem (
-																												Class<? extends Sort> t,
-																												boolean bln ) {
-																											super.updateItem(
-																													t,
-																													bln );
+					@Override
+					protected void updateItem ( Class<? extends Sort> t, boolean bln ) {
+						super.updateItem( t, bln );
 
-																											String name = "";
-																											if ( t != null ) {
-																												try {
-																													name = t.getAnnotation(
-																															SortInfo.class )
-																															.name();
-																												} catch ( Exception e ) {
-																													name = t.getSimpleName();
-																												} finally {
-																													setText( name );
-																												}
-																											}
-																										}
-																									};
+						String name = "";
+						if ( t != null ) {
+							try {
+								name = t.getAnnotation( SortInfo.class ).name();
+							} catch ( Exception e ) {
+								name = t.getSimpleName();
+							} finally {
+								setText( name );
+							}
+						}
+					}
+				};
 
-																									return cell;
-																								}
-																							};
+				return cell;
+			}
+		};
+	}
+
+	private Callback<ListView<Class<? extends Sort>>, ListCell<Class<? extends Sort>>>	cf;
 
 	private SortThread																	thread;
 
