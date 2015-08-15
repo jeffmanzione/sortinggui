@@ -1,18 +1,24 @@
 package sorts;
 
 import java.util.EmptyStackException;
+import java.util.Random;
 import java.util.Stack;
 
 import sorts.business.SortInfo;
 
-@SortInfo(name = "Quicksort (Middle Pivot)", designer = "Hoare (1961)",
+@SortInfo(name = "Quicksort (Random)", designer = "Hoare (1961)",
     link = "http://en.wikipedia.org/wiki/Quicksort")
-public class QuicksortMiddlePivot extends Sort {
+public class QuicksortRandom extends Sort {
+
+  // private static final int NUM_PROBES = 3;
+
   private Stack<Range> ranges;
 
   private Range range;
 
   int left, right, pivot;
+
+  private Random rand = new Random();
 
   private boolean sorting, done;
 
@@ -39,6 +45,7 @@ public class QuicksortMiddlePivot extends Sort {
 
   protected void nextMove() {
     if (!sorting) {
+
       try {
         incLeft = true;
         incRight = false;
@@ -46,7 +53,8 @@ public class QuicksortMiddlePivot extends Sort {
 
         left = range.start;
         right = range.end;
-        pivot = left + (right - left) / 2;
+
+        pivot = selectPivot();
         sorting = true;
 
         // System.out.println(range);
@@ -131,6 +139,32 @@ public class QuicksortMiddlePivot extends Sort {
     //
     // j++;
     // }
+
+  }
+
+  // private int[] selectPivot() {
+  // // return left + (right - left) / 2;
+  //
+  // int range = right - left;
+  //
+  // int[] choices = new int[NUM_PROBES];
+  // boolean[] takenIndices = new boolean[range];
+  //
+  // choices[0] = rand.nextInt(range);
+  // takenIndices[choices[0]] = true;
+  // for (int i = 1; i < NUM_PROBES; i++) {
+  // int index;
+  // while (takenIndices[index = rand.nextInt(range)])
+  // ;
+  // takenIndices[index] = true;
+  // choices[i] = index;
+  // }
+  // return choices;
+  //
+  // }
+
+  private int selectPivot() {
+    return rand.nextInt(right - left) + left;
 
   }
 
